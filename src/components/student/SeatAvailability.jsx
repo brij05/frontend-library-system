@@ -1,6 +1,7 @@
 import React from 'react';
 import { Phone } from 'lucide-react';
 import SeatMapVisual from './SeatMapVisual';
+const BACKEND_BASE_URL = import.meta.env.VITE_API_URL.replace("/api", "");
 
 const SeatAvailability = ({
   availableSeats,
@@ -63,9 +64,10 @@ const SeatAvailability = ({
               </div>
 
               {/* Payment QR */}
+              
               <div className="text-center">
                 <img
-                  src={library.paytmQR}
+                 src={`${BACKEND_BASE_URL}${library.paytmQR}`} 
                   alt="Paytm QR"
                   className="mx-auto mb-4 w-80 h-80 object-contain border-4 border-gray-300 rounded-lg"
                 />
