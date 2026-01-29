@@ -30,12 +30,12 @@ export const useLibraryDataAPI = () => {
     try {
       console.log('🔄 Fetching all data...');
       
-      // Fetch libraries first
+      
       const librariesData = await LibraryService.getAllLibraries();
       console.log('📚 Libraries fetched:', librariesData);
       setLibraries(librariesData || []);
 
-      // Fetch other data in parallel
+      
       const [seatsData, studentsData, timeSlotsData, pricingData] = await Promise.all([
         SeatService.getAllSeats().catch(err => {
           console.error('Seats fetch error:', err);
@@ -64,7 +64,7 @@ export const useLibraryDataAPI = () => {
       setStudents(studentsData || []);
       setTimeSlots(timeSlotsData || []);
 
-      // Convert pricing array to object format
+      
       const pricingObj = {};
       if (Array.isArray(pricingData)) {
         pricingData.forEach(p => {
@@ -88,7 +88,7 @@ export const useLibraryDataAPI = () => {
     }
   };
 
-  // Refresh specific data
+  
   const refreshLibraries = async () => {
     try {
       const data = await LibraryService.getAllLibraries();
