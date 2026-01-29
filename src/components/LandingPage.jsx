@@ -15,7 +15,7 @@ const LandingPage = ({ setView }) => {
           />
 
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Welcome To Fully Digital Library
+            Welcome To First Digital Library
           </h1>
           <p className="text-gray-600">
             Choose your seat, time slot, and start studying today
