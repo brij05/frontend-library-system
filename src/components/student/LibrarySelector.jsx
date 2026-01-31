@@ -54,21 +54,28 @@ const LibrarySelector = ({
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {libraries.map(lib => {
-         
+          
           const libraryId = lib._id || lib.id;
           
           return (
             <button
               key={libraryId}
               onClick={() => handleSelect(libraryId)}
-              className={`p-4 rounded-lg border-2 transition ${
+              className={`p-4 rounded-lg border-2 transition flex flex-col items-center text-center ${
                 selectedLibrary === libraryId
                   ? 'border-indigo-600 bg-indigo-50'
                   : 'border-gray-200 hover:border-indigo-300'
               }`}
             >
               <div className="font-semibold text-lg">{lib.name}</div>
-              <div className="text-sm text-gray-600 mt-2">
+              
+              {/* Added Address Section */}
+              <div className="flex items-start justify-center gap-1 mt-1 text-gray-500 max-w-xs">
+                <span className="shrink-0 text-sm mt-0.5">📍</span>
+                <span className="text-xs leading-tight">{lib.address}</span>
+              </div>
+
+              <div className="text-sm text-gray-600 mt-3">
                 {lib.hasAC && (
                   <span className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2 text-xs">
                     AC Available
