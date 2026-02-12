@@ -4,6 +4,7 @@ import SeatService from '../services/seat.service';
 import StudentService from '../services/student.service';
 import TimeSlotService from '../services/timeslot.service';
 import PricingService from '../services/pricing.service';
+import { checkAndResetMonthlyPayments } from '../utils/monthlyReset';
 
 export const useLibraryDataAPI = () => {
   const [libraries, setLibraries] = useState([]);
@@ -30,12 +31,10 @@ export const useLibraryDataAPI = () => {
     try {
       console.log('🔄 Fetching all data...');
       
-      
       const librariesData = await LibraryService.getAllLibraries();
       console.log('📚 Libraries fetched:', librariesData);
       setLibraries(librariesData || []);
 
-      
       const [seatsData, studentsData, timeSlotsData, pricingData] = await Promise.all([
         SeatService.getAllSeats().catch(err => {
           console.error('Seats fetch error:', err);
@@ -58,13 +57,19 @@ export const useLibraryDataAPI = () => {
       console.log('💺 Seats fetched:', seatsData?.length || 0);
       console.log('👨‍🎓 Students fetched:', studentsData?.length || 0);
       console.log('⏰ TimeSlots fetched:', timeSlotsData?.length || 0);
-      console.log('💰 Pricing fetched:', pricingData?.length || 0);
+      
+      // IMPORTANT: Extract libraryId from populated objects
+      const cleanedTimeSlots = (timeSlotsData || []).map(ts => ({
+        ...ts,
+        libraryId: ts.libraryId?._id || ts.libraryId
+      }));
+      console.log('⏰ Cleaned timeSlots:', cleanedTimeSlots);
 
       setSeats(seatsData || []);
       setStudents(studentsData || []);
-      setTimeSlots(timeSlotsData || []);
+      setTimeSlots(cleanedTimeSlots);
 
-      
+      // Convert pricing array to object format
       const pricingObj = {};
       if (Array.isArray(pricingData)) {
         pricingData.forEach(p => {
@@ -80,6 +85,11 @@ export const useLibraryDataAPI = () => {
       console.log('💰 Pricing object:', pricingObj);
       setPricing(pricingObj);
 
+      // AUTO-RESET MONTHLY PAYMENTS WITH FULL FEE
+      if (studentsData && studentsData.length > 0) {
+        await checkAndResetMonthlyPayments(studentsData, pricingObj, cleanedTimeSlots, refreshStudents);
+      }
+
     } catch (err) {
       console.error('❌ Error fetching data:', err);
       setError(err.message || 'Failed to load data');
@@ -88,7 +98,6 @@ export const useLibraryDataAPI = () => {
     }
   };
 
-  
   const refreshLibraries = async () => {
     try {
       const data = await LibraryService.getAllLibraries();
